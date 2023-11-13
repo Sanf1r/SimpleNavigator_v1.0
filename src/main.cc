@@ -35,49 +35,57 @@ int Random(int size) {
   return gen(rng);
 }
 
-// std::vector<int> GetLeastSpanningTree(Graph& graph) {}
+std::vector<std::vector<double>> GetLeastSpanningTree(Graph& graph) {
+  std::vector<std::vector<double>> result;
+  result.resize(7);
+  for (int i = 0; i < 7; ++i) {
+    result[i].resize(7, inf);
+  }
 
-int main() {
-  std::vector<std::pair<int, int>> path;
-  Graph one;
   std::set<int> visited;
   std::set<int> unvisited;
-  int graph_size = one.GetSize();
+
+  int graph_size = graph.GetSize();
   int from, to;
 
   for (int i = 0; i < graph_size; ++i) {
     unvisited.insert(i);
   }
 
-  //   int random_index = Random(graph_size);
+  int random_index = Random(graph_size);
 
-  visited.insert(3);
-  unvisited.erase(3);
-  int c = 1;
+  visited.insert(random_index);
+  unvisited.erase(random_index);
+
   while (!unvisited.empty()) {
     double min = inf;
     for (auto i = visited.begin(); i != visited.end(); ++i) {
       for (auto j = unvisited.begin(); j != unvisited.end(); ++j) {
-        bool not_inf = one(*i, *j) != inf;
-        if (not_inf && one(*i, *j) < min) {
-          min = one(*i, *j);
+        bool not_inf = graph(*i, *j) != inf;
+        if (not_inf && graph(*i, *j) < min) {
+          min = graph(*i, *j);
           from = *i;
           to = *j;
         }
       }
     }
-    path.push_back(std::pair(from, to));
+
+    result[to][from] = result[from][to] = min;
     visited.insert(to);
     unvisited.erase(to);
-
-    std::cout << "loop number = " << c++ << std::endl;
   }
+  return result;
+}
 
-  std::vector<char> letters = {'A', 'B', 'C', 'D', 'E', 'F', 'G'};
+int main() {
+  Graph one;
+  std::vector<std::vector<double>> res = GetLeastSpanningTree(one);
 
-  for (auto data : path) {
-    std::cout << letters[data.first] << " " << letters[data.second]
-              << std::endl;
+  for (int i = 0; i < 7; ++i) {
+    for (int j = 0; j < 7; ++j) {
+      std::cout << res[i][j] << " ";
+    }
+    std::cout << std::endl;
   }
 
   return 0;
