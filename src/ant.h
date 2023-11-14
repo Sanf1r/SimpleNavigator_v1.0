@@ -5,9 +5,8 @@ class Ant {
  public:
   explicit Ant(int start) : start_location(start), current_location(start) {}
 
-  void MakeChoice(const Graph &graph,
-                  const std::vector<std::vector<double>> &pheromone_map,
-                  double a, double b) {
+  void MakeChoice(const Graph &graph, const AdjMatrix &pheromone_map, double a,
+                  double b) {
     if (path.vertices.empty()) {
       path.vertices.push_back(current_location);
       visited.push_back(current_location);
@@ -31,7 +30,7 @@ class Ant {
     std::vector<double> probability;
     double summary_wish = 0.0f;
     for (auto v : neighbor_vertexes) {
-      double t = pheromone_map[current_location][v];
+      double t = pheromone_map(current_location, v);
       double w = graph(current_location, v);
       double n = 1 / w;
       wish.push_back(std::pow(t, a) * std::pow(n, b));
@@ -52,12 +51,10 @@ class Ant {
     std::size_t next_vertex = 0;
     double choose = getRandomChoice();
 
-    for (std::size_t n = 0; n != neighbor_vertexes.size(); ++n) {
-      if (choose <= choosing_probability[n]) {
-        next_vertex = neighbor_vertexes[n];
-        break;
-      }
-    }
+    int index = std::lower_bound(choosing_probability.begin(),
+                                 choosing_probability.end(), choose) -
+                choosing_probability.begin();
+    next_vertex = neighbor_vertexes[index];
 
     path.vertices.push_back(next_vertex);
     path.distance += graph(current_location, next_vertex);
