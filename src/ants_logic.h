@@ -3,48 +3,46 @@
 
 class AntsLogic {
  public:
-  explicit AntsLogic(const Graph &graph)
-      : graph_(graph), kQ_(0.015 * graph.GetSize()) {
-    pheromone_.GetData().insert(pheromone_.GetData().end(),
-                                graph.GetData().begin(), graph.GetData().end());
-    pheromone_.SetJump(graph.GetSize());
+  explicit AntsLogic(const Graph &graph) : graph_(graph) {
+    pheromone_.InitWithNumber(graph.GetSize(), 0.2);
+    // pheromone_.GetData().insert(pheromone_.GetData().end(),
+    //                             graph.GetData().begin(),
+    //                             graph.GetData().end());
   }
 
   TsmResult SolveSalesmansProblem() {
     // if (graph_.IsEmpty())
     //      return {};
 
-    constexpr std::size_t kMaxIterationsWithoutImprovement = 5000;
-    const std::size_t kVertexesCount = graph_.GetSize();
-    std::size_t counter = 0;
+    const int kVertexesCount = graph_.GetSize();
+    int counter = 0;
 
     TsmResult path;
     path.distance = inf;
 
-    while (counter++ != kMaxIterationsWithoutImprovement) {
+    while (counter++ != kMaxLoopsWithNoGains) {
       AdjMatrix local_pheromone_update;
-      local_pheromone_update.init(kVertexesCount * kVertexesCount);
-      local_pheromone_update.SetJump(kVertexesCount);
+      local_pheromone_update.InitWithNumber(kVertexesCount, 0);
 
       CreateAnts();
 
       for (auto &ant : ants_) {
         // ant runs
-        while (ant.CanYou()) {
-          ant.MakeChoice(graph_, pheromone_, kAlpha_, kBeta_);
+        while (ant.GetMove()) {
+          ant.AntMove(graph_, pheromone_, kAlpha_, kBeta_);
         }
         // compare dist
-        auto ant_path = ant.GetPath();
-        if (ant_path.vertices.size() == kVertexesCount + 1) {
+        TsmResult ant_path = ant.GetPath();
+        if ((int)ant_path.vertices.size() == kVertexesCount + 1) {
           if (path.distance > ant.GetPath().distance) {
             path = std::move(ant.GetPath());
             counter = 0;
           }
 
-          for (std::size_t v = 0; v != ant_path.vertices.size() - 1; ++v) {
-            local_pheromone_update(ant_path.vertices[v],
-                                   ant_path.vertices[v + 1]) +=
-                kQ_ / ant_path.distance;
+          double pheromone_shift = kQ_ / ant_path.distance;
+          for (int i = 0; i < kVertexesCount; ++i) {
+            local_pheromone_update(ant_path.vertices[i],
+                                   ant_path.vertices[i + 1]) += pheromone_shift;
           }
         }
       }
@@ -52,14 +50,6 @@ class AntsLogic {
       UpdateGlobalPheromone(local_pheromone_update);
     }
 
-    // ants_.clear();
-    // ants_.push_back(Ant(0));
-
-    // while (ants_[0].CanYou()) {
-    //   ants_[0].MakeChoice(graph_, pheromone_, kAlpha_, kBeta_);
-    // }
-
-    // path = std::move(ants_[0].GetPath());
     return path;
   }
 
@@ -67,31 +57,31 @@ class AntsLogic {
   Graph graph_;
   AdjMatrix pheromone_;
 
-  const double kAlpha_ = 1.0;
-  const double kBeta_ = 2.0;
-  const double kPheromone0_ = 1;
-  const double kQ_;
-  const double kEvaporation_ = 0.2;
+  const int kMaxLoopsWithNoGains = 2000;
+  const double kAlpha_ = 2.0;
+  const double kBeta_ = 1.0;
+  const double kQ_ = 1.0;
+  const double kEvap_ = 0.8;
 
   std::vector<Ant> ants_;
 
   void CreateAnts() {
     ants_.clear();
     const int kAntsCount = graph_.GetSize();
+    ants_.reserve(kAntsCount);
 
     for (int i = 0; i < kAntsCount; ++i) {
       ants_.push_back(Ant(i));
     }
   }
+
   void UpdateGlobalPheromone(const AdjMatrix &lpu) {
-    // int size = lpu.size();
     int size = graph_.GetSize();
-    for (int from = 0; from < size; ++from) {
-      for (int to = 0; to < size; ++to) {
-        pheromone_(from, to) =
-            (1 - kEvaporation_) * pheromone_(from, to) + lpu(from, to);
-        if (pheromone_(from, to) < 0.01 and from != to)
-          pheromone_(from, to) = 0.01;
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        if (i == j) continue;
+        pheromone_(i, j) = kEvap_ * pheromone_(i, j) + lpu(i, j);
+        if (pheromone_(i, j) < 0.2) pheromone_(i, j) = 0.2;
       }
     }
   }

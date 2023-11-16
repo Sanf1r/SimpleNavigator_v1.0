@@ -34,8 +34,7 @@ class Graph {
     ss >> size_;
     if (size_ < 1) return false;
 
-    // data_.init(size_);
-    data_.SetJump(size_);
+    data_.Init(size_);
 
     for (int i = 0; i < size_; ++i) {
       std::getline(inFile, temp);

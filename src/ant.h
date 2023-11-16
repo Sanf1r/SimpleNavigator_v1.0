@@ -3,19 +3,24 @@
 
 class Ant {
  public:
+  Ant() = delete;
+
   explicit Ant(int start) : start_location(start), current_location(start) {}
 
-  void MakeChoice(const Graph &graph, const AdjMatrix &pheromone_map, double a,
-                  double b) {
+  void AntMove(const Graph &graph, const AdjMatrix &pheromone_map, double a,
+               double b) {
+    // start run
     if (path.vertices.empty()) {
       path.vertices.push_back(current_location);
-      visited.push_back(current_location);
+      visited.insert(current_location);
     }
 
+    // get neighbors
     std::vector<int> neighbor_vertexes = getNeighborVertexes(graph);
 
+    // if nowhere to run
     if (neighbor_vertexes.empty()) {
-      can_continue = false;
+      can_move = false;
       if (graph(current_location, start_location) != inf) {
         path.vertices.push_back(start_location);
         path.distance += graph(current_location, start_location);
@@ -23,44 +28,34 @@ class Ant {
       return;
     }
 
-    std::vector<double> choosing_probability(neighbor_vertexes.size());
+    MakeRoulette(neighbor_vertexes, pheromone_map, graph, a, b);
 
-    // Подсчет вероятности перехода муравья из одной вершины в другую
-    std::vector<double> wish;
-    std::vector<double> probability;
-    double summary_wish = 0.0f;
-    for (auto v : neighbor_vertexes) {
-      double t = pheromone_map(current_location, v);
-      double w = graph(current_location, v);
-      double n = 1 / w;
-      wish.push_back(std::pow(t, a) * std::pow(n, b));
-      summary_wish += wish.back();
-    }
-
-    for (std::size_t neighbor = 0; neighbor != neighbor_vertexes.size();
-         ++neighbor) {
-      probability.push_back(wish[neighbor] / summary_wish);
-      if (neighbor == 0)
-        choosing_probability[neighbor] = probability.back();
-      else
-        choosing_probability[neighbor] =
-            choosing_probability[neighbor - 1] + probability.back();
-    }
-
-    // Определение следующей вершины, которую посетит муравей
-    std::size_t next_vertex = 0;
+    // casino
+    int next_vertex = 0;
     double choose = getRandomChoice();
-
-    int index = std::lower_bound(choosing_probability.begin(),
-                                 choosing_probability.end(), choose) -
-                choosing_probability.begin();
+    int index =
+        std::lower_bound(probability.begin(), probability.end(), choose) -
+        probability.begin();
     next_vertex = neighbor_vertexes[index];
 
+    // add, calculate and repeat
     path.vertices.push_back(next_vertex);
     path.distance += graph(current_location, next_vertex);
-    visited.push_back(next_vertex);
+    visited.insert(next_vertex);
     current_location = next_vertex;
   }
+
+  bool GetMove() { return can_move; }
+
+  TsmResult &GetPath() { return path; }
+
+ private:
+  TsmResult path;
+
+  std::set<int> visited;
+  std::vector<double> probability;
+  int start_location = 0, current_location = 0;
+  bool can_move = true;
 
   double getRandomChoice() {
     std::random_device rd;
@@ -72,24 +67,35 @@ class Ant {
   std::vector<int> getNeighborVertexes(const Graph &graph) {
     std::vector<int> vertexes;
     for (int to = 0; to < graph.GetSize(); ++to) {
-      bool edge_is_exist = graph(current_location, to) != inf;
-      bool vertex_is_unvisited =
-          std::find(visited.begin(), visited.end(), to) == visited.end();
-      if (edge_is_exist && vertex_is_unvisited) vertexes.push_back(to);
+      if (graph(current_location, to) != inf &&
+          visited.find(to) == visited.end()) {
+        vertexes.push_back(to);
+      }
     }
     return vertexes;
   }
 
-  bool CanYou() { return can_continue; }
+  void MakeRoulette(std::vector<int> &neighbor_vertexes,
+                    const AdjMatrix &pheromone_map, const Graph &graph,
+                    double a, double b) {
+    // calculate wishes for vertexes
+    probability.clear();
+    std::vector<double> wish;
+    double summary_wish = 0.0f;
+    for (auto &v : neighbor_vertexes) {
+      double t = pheromone_map(current_location, v);
+      double n = std::pow(graph(current_location, v), -1);
+      wish.push_back(std::pow(t, a) * std::pow(n, b));
+      summary_wish += wish.back();
+    }
 
-  TsmResult &GetPath() { return path; }
-
- private:
-  TsmResult path;
-
-  std::vector<int> visited;
-  int start_location = 0, current_location = 0;
-  bool can_continue = true;
+    // make roulette wheel
+    int neighbor_size = neighbor_vertexes.size();
+    for (int i = 0; i < neighbor_size; ++i) {
+      probability.push_back(wish[i] / summary_wish);
+      if (i != 0) probability[i] += probability[i - 1];
+    }
+  }
 };
 
 #endif  //  ANT_H_

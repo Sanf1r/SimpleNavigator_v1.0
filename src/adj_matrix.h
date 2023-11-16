@@ -7,11 +7,17 @@ class AdjMatrix {
  public:
   AdjMatrix() = default;
 
-  void init(int size) { data_.resize(size); }
+  void Init(int size) {
+    data_.reserve(size * size);
+    jump_ = size;
+  }
+
+  void InitWithNumber(int size, double num) {
+    data_.resize(size * size, num);
+    jump_ = size;
+  }
 
   void Push(double num) { data_.push_back(num); }
-
-  void SetJump(int num) { jump_ = num; }
 
   double& operator()(int row, int columns) {
     return data_[row * jump_ + columns];
@@ -20,8 +26,6 @@ class AdjMatrix {
   const double& operator()(int row, int columns) const {
     return data_[row * jump_ + columns];
   }
-
-  void SetData(std::vector<double> data) { data_ = data; }
 
   std::vector<double>& GetData() { return data_; }
 
