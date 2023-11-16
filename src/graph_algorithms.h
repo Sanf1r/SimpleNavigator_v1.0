@@ -10,7 +10,7 @@ class GraphAlgorithms {
     int graph_size = graph.GetSize();
     result.resize(graph_size);
     for (int i = 0; i < graph_size; ++i) {
-      result[i].resize(7, inf);
+      result[i].resize(graph_size, inf);
     }
 
     std::set<int> visited;
