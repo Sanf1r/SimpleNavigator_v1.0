@@ -5,14 +5,14 @@ class Ant {
  public:
   Ant() = delete;
 
-  explicit Ant(int start) : start_location(start), current_location(start) {}
+  explicit Ant(int start) : start_location_(start), current_location_(start) {}
 
   void AntMove(const Graph &graph, const AdjMatrix &pheromone_map, double a,
                double b) {
     // start run
-    if (path.vertices.empty()) {
-      path.vertices.push_back(current_location);
-      visited.insert(current_location);
+    if (path_.vertices.empty()) {
+      path_.vertices.push_back(current_location_);
+      visited_.insert(current_location_);
     }
 
     // get neighbors
@@ -20,10 +20,10 @@ class Ant {
 
     // if nowhere to run
     if (neighbor_vertexes.empty()) {
-      can_move = false;
-      if (graph(current_location, start_location) != inf) {
-        path.vertices.push_back(start_location);
-        path.distance += graph(current_location, start_location);
+      can_move_ = false;
+      if (graph(current_location_, start_location_) != inf) {
+        path_.vertices.push_back(start_location_);
+        path_.distance += graph(current_location_, start_location_);
       }
       return;
     }
@@ -34,28 +34,37 @@ class Ant {
     int next_vertex = 0;
     double choose = getRandomChoice();
     int index =
-        std::lower_bound(probability.begin(), probability.end(), choose) -
-        probability.begin();
+        std::lower_bound(probability_.begin(), probability_.end(), choose) -
+        probability_.begin();
     next_vertex = neighbor_vertexes[index];
 
     // add, calculate and repeat
-    path.vertices.push_back(next_vertex);
-    path.distance += graph(current_location, next_vertex);
-    visited.insert(next_vertex);
-    current_location = next_vertex;
+    path_.vertices.push_back(next_vertex);
+    path_.distance += graph(current_location_, next_vertex);
+    visited_.insert(next_vertex);
+    current_location_ = next_vertex;
   }
 
-  bool GetMove() { return can_move; }
+  void BrainwashAnt() {
+    path_.distance = 0;
+    path_.vertices.clear();
+    visited_.clear();
+    probability_.clear();
+    current_location_ = start_location_;
+    can_move_ = true;
+  }
 
-  TsmResult &GetPath() { return path; }
+  bool GetMove() { return can_move_; }
+
+  TsmResult &GetPath() { return path_; }
 
  private:
-  TsmResult path;
+  TsmResult path_;
 
-  std::set<int> visited;
-  std::vector<double> probability;
-  int start_location = 0, current_location = 0;
-  bool can_move = true;
+  std::set<int> visited_;
+  std::vector<double> probability_;
+  int start_location_ = 0, current_location_ = 0;
+  bool can_move_ = true;
 
   double getRandomChoice() {
     std::random_device rd;
@@ -67,8 +76,8 @@ class Ant {
   std::vector<int> getNeighborVertexes(const Graph &graph) {
     std::vector<int> vertexes;
     for (int to = 0; to < graph.GetSize(); ++to) {
-      if (graph(current_location, to) != inf &&
-          visited.find(to) == visited.end()) {
+      if (graph(current_location_, to) != inf &&
+          visited_.find(to) == visited_.end()) {
         vertexes.push_back(to);
       }
     }
@@ -79,12 +88,12 @@ class Ant {
                     const AdjMatrix &pheromone_map, const Graph &graph,
                     double a, double b) {
     // calculate wishes for vertexes
-    probability.clear();
+    probability_.clear();
     std::vector<double> wish;
     double summary_wish = 0.0f;
     for (auto &v : neighbor_vertexes) {
-      double t = pheromone_map(current_location, v);
-      double n = std::pow(graph(current_location, v), -1);
+      double t = pheromone_map(current_location_, v);
+      double n = std::pow(graph(current_location_, v), -1);
       wish.push_back(std::pow(t, a) * std::pow(n, b));
       summary_wish += wish.back();
     }
@@ -92,8 +101,8 @@ class Ant {
     // make roulette wheel
     int neighbor_size = neighbor_vertexes.size();
     for (int i = 0; i < neighbor_size; ++i) {
-      probability.push_back(wish[i] / summary_wish);
-      if (i != 0) probability[i] += probability[i - 1];
+      probability_.push_back(wish[i] / summary_wish);
+      if (i != 0) probability_[i] += probability_[i - 1];
     }
   }
 };

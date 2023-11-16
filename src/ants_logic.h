@@ -3,51 +3,46 @@
 
 class AntsLogic {
  public:
+  AntsLogic() = delete;
   explicit AntsLogic(const Graph &graph) : graph_(graph) {
     pheromone_.InitWithNumber(graph.GetSize(), 0.2);
-    // pheromone_.GetData().insert(pheromone_.GetData().end(),
-    //                             graph.GetData().begin(),
-    //                             graph.GetData().end());
+    graph_size_ = graph_.GetSize();
   }
 
   TsmResult SolveSalesmansProblem() {
-    // if (graph_.IsEmpty())
-    //      return {};
-
-    const int kVertexesCount = graph_.GetSize();
     int counter = 0;
 
     TsmResult path;
     path.distance = inf;
+    CreateAnts();
 
-    while (counter++ != kMaxLoopsWithNoGains) {
+    while (counter++ != kMaxLoopsWithNoGains_) {
       AdjMatrix local_pheromone_update;
-      local_pheromone_update.InitWithNumber(kVertexesCount, 0);
-
-      CreateAnts();
+      local_pheromone_update.InitWithNumber(graph_size_, 0);
 
       for (auto &ant : ants_) {
-        // ant runs
+        // ant runs while he still can
         while (ant.GetMove()) {
           ant.AntMove(graph_, pheromone_, kAlpha_, kBeta_);
         }
-        // compare dist
+        // compare ant result to best
         TsmResult ant_path = ant.GetPath();
-        if ((int)ant_path.vertices.size() == kVertexesCount + 1) {
-          if (path.distance > ant.GetPath().distance) {
+        if ((int)ant_path.vertices.size() == graph_size_ + 1) {
+          if (ant.GetPath().distance < path.distance) {
             path = std::move(ant.GetPath());
             counter = 0;
           }
-
-          double pheromone_shift = kQ_ / ant_path.distance;
-          for (int i = 0; i < kVertexesCount; ++i) {
+          // calculate pheromone delta for every edge
+          double pheromone_delta = kQ_ / ant_path.distance;
+          for (int i = 0; i < graph_size_; ++i) {
             local_pheromone_update(ant_path.vertices[i],
-                                   ant_path.vertices[i + 1]) += pheromone_shift;
+                                   ant_path.vertices[i + 1]) += pheromone_delta;
           }
         }
       }
 
       UpdateGlobalPheromone(local_pheromone_update);
+      BrainwashAnts();
     }
 
     return path;
@@ -56,22 +51,26 @@ class AntsLogic {
  private:
   Graph graph_;
   AdjMatrix pheromone_;
+  std::vector<Ant> ants_;
 
-  const int kMaxLoopsWithNoGains = 2000;
-  const double kAlpha_ = 2.0;
+  int graph_size_ = 0;
+  const int kMaxLoopsWithNoGains_ = 5000;
+  const double kAlpha_ = 4.0;
   const double kBeta_ = 1.0;
   const double kQ_ = 1.0;
   const double kEvap_ = 0.8;
 
-  std::vector<Ant> ants_;
-
   void CreateAnts() {
-    ants_.clear();
-    const int kAntsCount = graph_.GetSize();
-    ants_.reserve(kAntsCount);
+    ants_.reserve(graph_size_);
 
-    for (int i = 0; i < kAntsCount; ++i) {
+    for (int i = 0; i < graph_size_; ++i) {
       ants_.push_back(Ant(i));
+    }
+  }
+
+  void BrainwashAnts() {
+    for (int i = 0; i < graph_size_; ++i) {
+      ants_[i].BrainwashAnt();
     }
   }
 
