@@ -1,15 +1,6 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-#include <fstream>
-#include <iostream>
-#include <random>
-#include <set>
-#include <sstream>
-#include <vector>
-
-const double inf = 1.0 / 0.0;
-
 class Graph {
  public:
   Graph() = default;
@@ -25,9 +16,10 @@ class Graph {
   const std::vector<double>& GetData() const { return data_.GetData(); }
 
   bool LoadGraph(const std::string& path) {
-    std::ifstream inFile(path);
+    std::ifstream file(path);
+    if (file.bad()) return false;
     std::string temp;
-    std::getline(inFile, temp);
+    std::getline(file, temp);
     std::istringstream ss(temp);
     int c = 0;
     data_.Clear();
@@ -38,7 +30,7 @@ class Graph {
     data_.Init(size_);
 
     for (int i = 0; i < size_; ++i) {
-      std::getline(inFile, temp);
+      std::getline(file, temp);
       std::istringstream ss(temp);
 
       int x;
@@ -48,7 +40,7 @@ class Graph {
         if (x != 0) {
           data_.Push(x);
         } else {
-          data_.Push(inf);
+          data_.Push(INFINITY);
         }
         c++;
       }

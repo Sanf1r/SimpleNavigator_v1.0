@@ -13,7 +13,7 @@ class AntsLogic {
     int counter = 0;
 
     TsmResult path;
-    path.distance = inf;
+    path.distance = INFINITY;
     CreateAnts();
 
     while (counter++ != kMaxLoopsWithNoGains_) {

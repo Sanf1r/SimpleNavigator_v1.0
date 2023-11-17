@@ -5,6 +5,7 @@
 
 class Controller {
  public:
+  Controller() = delete;
   explicit Controller(Model* m) : model_(m){};
 
   TsmResult SolveTravelingSalesmanProblem() {
@@ -15,7 +16,25 @@ class Controller {
     return model_->GetLeastSpanningTree();
   }
 
-  void LoadGraph(const std::string& path) { return model_->LoadGraph(path); }
+  std::vector<int> BreadthFirstSearch(int num) {
+    return model_->BreadthFirstSearch(num);
+  }
+
+  std::vector<int> DepthFirstSearch(int num) {
+    return model_->DepthFirstSearch(num);
+  }
+
+  long GetShortestPathBetweenVertices(int vertex1, int vertex2) {
+    return model_->GetShortestPathBetweenVertices(vertex1, vertex2);
+  }
+
+  AdjMatrix GetShortestPathsBetweenAllVertices() {
+    return model_->GetShortestPathsBetweenAllVertices();
+  }
+
+  bool LoadGraph(const std::string& path) { return model_->LoadGraph(path); }
+
+  bool UndirectedCheck() { return model_->UndirectedCheck(); }
 
  private:
   Model* model_;

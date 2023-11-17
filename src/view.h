@@ -1,6 +1,7 @@
 #ifndef VIEW_H_
 #define VIEW_H_
 
+#include <chrono>
 #include <iostream>
 #include <string>
 
@@ -44,8 +45,6 @@ class View {
   }
 
   void startEventLoop() {
-    TsmResult tsm_res;
-    std::vector<std::vector<double>> tree_res;
     std::string path;
     while (true) {
       displayMenu();
@@ -54,50 +53,35 @@ class View {
         case LOAD:
           std::cout << "Enter path to file: " << std::endl;
           std::cin >> path;
-          c_->LoadGraph(path);
+          if (c_->LoadGraph(path)) {
+            std::cout << "Graph is successfully loaded!" << std::endl;
+          } else {
+            std::cout << "Something wrong with a file path!" << std::endl;
+          }
           break;
 
         case BREADTH:
-          std::cout << "You pick 2" << std::endl;
+          Bfs();
           break;
 
         case DEPTH:
-          std::cout << "You pick 3" << std::endl;
+          Dfs();
           break;
 
         case SHORT1:
-          std::cout << "You pick 4" << std::endl;
+          Dijkstra();
           break;
 
         case SHORT2:
-          std::cout << "You pick 5" << std::endl;
+          FloWa();
           break;
 
         case TREE:
-          tree_res = std::move(c_->GetLeastSpanningTree());
-          std::cout << "Minimal spanning tree found!" << std::endl;
-          for (int i = 0; i < (int)tree_res.size(); ++i) {
-            for (int j = 0; j < (int)tree_res.size(); ++j) {
-              if (tree_res[i][j] == inf)
-                std::cout << "0 ";
-              else
-                std::cout << tree_res[i][j] << " ";
-            }
-            std::cout << std::endl;
-          }
+          Msp();
           break;
 
         case TSP:
-          tsm_res = std::move(c_->SolveTravelingSalesmanProblem());
-          std::cout << "TSP problem solved!" << std::endl;
-          std::cout << "Path - ";
-          for (int i = 0; i < (int)tsm_res.vertices.size(); ++i) {
-            std::cout << tsm_res.vertices[i] + 1 << " ";
-          }
-          std::cout << std::endl;
-          std::cout << "Total distance - ";
-          std::cout << tsm_res.distance << std::endl;
-          // std::cout << "time - " << total << " seconds" << std::endl;
+          Tsp();
           break;
 
         case EXIT:
@@ -112,6 +96,100 @@ class View {
 
  private:
   Controller* c_;
+
+  void Tsp() {
+    TsmResult tsm_res;
+    std::cout << "=========" << std::endl;
+    std::cout << " TRAVELLING SALESMAN PROBLEM " << std::endl;
+    std::cout << "=========" << std::endl;
+    auto t1 = std::chrono::high_resolution_clock::now();
+    tsm_res = std::move(c_->SolveTravelingSalesmanProblem());
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto total =
+        std::chrono::duration_cast<std::chrono::seconds>(t2 - t1).count();
+    if (tsm_res.distance != INFINITY) {
+      std::cout << "Travelling salesman problem solved!" << std::endl;
+      std::cout << "Path - ";
+      for (int i = 0; i < (int)tsm_res.vertices.size(); ++i) {
+        std::cout << tsm_res.vertices[i] + 1 << " ";
+      }
+      std::cout << std::endl;
+      std::cout << "Total distance - ";
+      std::cout << tsm_res.distance << std::endl;
+      std::cout << "Time to solve - " << total << " seconds" << std::endl;
+    } else {
+      std::cout << "Travelling salesman problem cannot be solved for "
+                   "this graph!"
+                << std::endl;
+    }
+  }
+
+  void Msp() {
+    std::vector<std::vector<double>> tree_res;
+    std::cout << "=========" << std::endl;
+    std::cout << " MINIMUM SPANNING TREE " << std::endl;
+    std::cout << "=========" << std::endl;
+    if (!c_->UndirectedCheck()) {
+      std::cout << "Loaded graph is not undirected!" << std::endl;
+    } else {
+      tree_res = std::move(c_->GetLeastSpanningTree());
+      std::cout << "Minimum spanning tree found!" << std::endl;
+      std::cout << "The adjacency matrix for the minimum spanning tree "
+                   "presented below:"
+                << std::endl;
+      for (int i = 0; i < (int)tree_res.size(); ++i) {
+        for (int j = 0; j < (int)tree_res.size(); ++j) {
+          if (tree_res[i][j] == INFINITY)
+            std::cout << "0 ";
+          else
+            std::cout << tree_res[i][j] << " ";
+        }
+        std::cout << std::endl;
+      }
+    }
+  }
+
+  void Bfs() {
+    std::cout << "BFS" << std::endl;
+    int num = 0;
+    std::cout << "Enter start vertex number: " << std::endl;
+    std::cin >> num;
+
+    std::vector<int> res_bfs = c_->BreadthFirstSearch(num);
+    for (auto& data : res_bfs) std::cout << data << " ";
+    std::cout << std::endl;
+  }
+
+  void Dfs() {
+    std::cout << "DFS" << std::endl;
+    int num = 0;
+    std::cout << "Enter start vertex number: " << std::endl;
+    std::cin >> num;
+
+    std::vector<int> res_dfs = c_->DepthFirstSearch(num);
+    for (auto& data : res_dfs) std::cout << data << " ";
+    std::cout << std::endl;
+  }
+
+  void Dijkstra() {
+    std::cout << "Dijkstra" << std::endl;
+    int num_1 = 0, num_2 = 0;
+
+    std::cout << "Enter start and finish vertex numbers: " << std::endl;
+    std::cin >> num_1 >> num_2;
+
+    long res_dij = c_->GetShortestPathBetweenVertices(num_1, num_2);
+
+    std::cout << res_dij << std::endl;
+  }
+
+  void FloWa() {
+    std::cout << "FloWa" << std::endl;
+
+    auto res_flowa = c_->GetShortestPathsBetweenAllVertices();
+
+    res_flowa.Print();
+  }
 };
 
 #endif  //  VIEW_H_

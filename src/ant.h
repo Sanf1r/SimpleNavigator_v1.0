@@ -1,6 +1,8 @@
 #ifndef ANT_H_
 #define ANT_H_
 
+#include "graph.h"
+
 class Ant {
  public:
   Ant() = delete;
@@ -21,7 +23,7 @@ class Ant {
     // if nowhere to run
     if (neighbor_vertexes.empty()) {
       can_move_ = false;
-      if (graph(current_location_, start_location_) != inf) {
+      if (graph(current_location_, start_location_) != INFINITY) {
         path_.vertices.push_back(start_location_);
         path_.distance += graph(current_location_, start_location_);
       }
@@ -76,7 +78,7 @@ class Ant {
   std::vector<int> getNeighborVertexes(const Graph &graph) {
     std::vector<int> vertexes;
     for (int to = 0; to < graph.GetSize(); ++to) {
-      if (graph(current_location_, to) != inf &&
+      if (graph(current_location_, to) != INFINITY &&
           visited_.find(to) == visited_.end()) {
         vertexes.push_back(to);
       }

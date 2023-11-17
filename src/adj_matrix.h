@@ -1,8 +1,6 @@
 #ifndef ADJ_MATRIX_H_
 #define ADJ_MATRIX_H_
 
-#include <vector>
-
 class AdjMatrix {
  public:
   AdjMatrix() = default;
@@ -18,6 +16,20 @@ class AdjMatrix {
   }
 
   void Push(double num) { data_.push_back(num); }
+
+  void Print() {
+    int c = 1;
+    for (int i = 0; i < (int)data_.size(); ++i) {
+      if (data_[i] == INFINITY) {
+        std::cout << "0 ";
+      } else {
+        std::cout << data_[i] << " ";
+      }
+
+      if (c % offset_ == 0) std::cout << std::endl;
+      c++;
+    }
+  }
 
   void Clear() { data_.clear(); }
 
