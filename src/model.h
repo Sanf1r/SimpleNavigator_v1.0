@@ -45,6 +45,8 @@ class Model {
 
   bool UndirectedCheck() { return ga_.UndirectedCheck(graph_); }
 
+  int GetSize() { return graph_.GetSize(); }
+
  private:
   Graph graph_;
   GraphAlgorithms ga_;

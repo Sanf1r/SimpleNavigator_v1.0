@@ -36,6 +36,8 @@ class Controller {
 
   bool UndirectedCheck() { return model_->UndirectedCheck(); }
 
+  int GetSize() { return model_->GetSize(); }
+
  private:
   Model* model_;
 };

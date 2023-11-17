@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <limits>
 #include <string>
 
 enum Choice {
@@ -97,6 +98,24 @@ class View {
  private:
   Controller* c_;
 
+  // TO DO
+  // INPUT FOR ONE
+
+  bool Input(int* num_1, int* num_2) {
+    int size = c_->GetSize();
+    std::cin >> *num_1;
+    std::cin >> *num_2;
+    if (!std::cin) {
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      return false;
+    }
+    if ((*num_1 > size || *num_1 < 1) || (*num_2 > size || *num_2 < 1)) {
+      return false;
+    }
+    return true;
+  }
+
   void Tsp() {
     TsmResult tsm_res;
     std::cout << "=========" << std::endl;
@@ -176,11 +195,12 @@ class View {
     int num_1 = 0, num_2 = 0;
 
     std::cout << "Enter start and finish vertex numbers: " << std::endl;
-    std::cin >> num_1 >> num_2;
-
-    long res_dij = c_->GetShortestPathBetweenVertices(num_1, num_2);
-
-    std::cout << res_dij << std::endl;
+    if (Input(&num_1, &num_2)) {
+      long res_dij = c_->GetShortestPathBetweenVertices(num_1, num_2);
+      std::cout << res_dij << std::endl;
+    } else {
+      std::cout << "You enter wrong vertex numbers!" << std::endl;
+    }
   }
 
   void FloWa() {
