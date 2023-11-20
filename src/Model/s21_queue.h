@@ -16,7 +16,8 @@ class queue : public stack<T> {
 
   // member functions
   queue() noexcept : stack<T>() {}
-  queue(std::initializer_list<value_type> const &items) : stack<T>(items) {}
+  explicit queue(std::initializer_list<value_type> const &items)
+      : stack<T>(items) {}
   queue(const queue &q) : stack<T>(q) {}
   queue(queue &&q) noexcept : stack<T>(q) {}
 

@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
-#include "./model.h"
+#include "../Model/model.h"
 
 class Controller {
  public:
@@ -32,7 +32,9 @@ class Controller {
     return model_->GetShortestPathsBetweenAllVertices();
   }
 
-  bool LoadGraph(const std::string& path) { return model_->LoadGraph(path); }
+  bool LoadGraphFromFile(const std::string& path) {
+    return model_->LoadGraphFromFile(path);
+  }
 
   bool UndirectedCheck() { return model_->UndirectedCheck(); }
 

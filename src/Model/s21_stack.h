@@ -9,6 +9,10 @@
 #ifndef A2_SIMPLENAVIGATOR_MAZE_SRC_LIBS_S21_STACK_H_
 #define A2_SIMPLENAVIGATOR_MAZE_SRC_LIBS_S21_STACK_H_
 
+#include <cstddef>
+#include <initializer_list>
+#include <stdexcept>
+
 template <class T>
 class stack {
  public:
@@ -30,7 +34,7 @@ class stack {
    * контейнер.
    * @param items Список элементов на вход.
    */
-  stack(std::initializer_list<value_type> const& items)
+  explicit stack(std::initializer_list<value_type> const& items)
       : back_(nullptr), root_(nullptr), size_(0) {
     for (auto i : items) {
       this->push(i);
