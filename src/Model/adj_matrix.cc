@@ -1,5 +1,7 @@
 #include "adj_matrix.h"
 
+namespace s21 {
+
 void AdjMatrix::Init(int size) {
   data_.reserve(size * size);
   offset_ = size;
@@ -39,3 +41,5 @@ const double& AdjMatrix::operator()(int row, int columns) const {
 std::vector<double>& AdjMatrix::GetData() { return data_; }
 
 const std::vector<double>& AdjMatrix::GetData() const { return data_; }
+
+}  // namespace s21

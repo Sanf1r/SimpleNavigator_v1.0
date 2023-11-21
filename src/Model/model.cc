@@ -1,5 +1,7 @@
 #include "model.h"
 
+namespace s21 {
+
 TsmResult Model::SolveTravelingSalesmanProblem() {
   return ga_.SolveSalesmansProblem(graph_);
 }
@@ -35,3 +37,5 @@ bool Model::ExportGraphToDot(const std::string& path) {
 bool Model::UndirectedCheck() { return ga_.UndirectedCheck(graph_); }
 
 int Model::GetSize() { return graph_.GetSize(); }
+
+}  // namespace s21

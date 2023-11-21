@@ -1,7 +1,9 @@
-#ifndef CONTROLLER_H_
-#define CONTROLLER_H_
+#ifndef A2_SIMPLENAVIGATOR_SRC_CONTROLLER_CONTROLLER_H_
+#define A2_SIMPLENAVIGATOR_SRC_CONTROLLER_CONTROLLER_H_
 
 #include "../Model/model.h"
+
+namespace s21 {
 
 class Controller {
  public:
@@ -43,5 +45,6 @@ class Controller {
  private:
   Model* model_;
 };
+}  // namespace s21
 
-#endif  //  CONTROLLER_H_
+#endif  //  A2_SIMPLENAVIGATOR_SRC_CONTROLLER_CONTROLLER_H_

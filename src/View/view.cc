@@ -1,5 +1,7 @@
 #include "view.h"
 
+namespace s21 {
+
 View::View(Controller* c) : c_(c) {}
 
 void View::DisplayMenu() {
@@ -30,21 +32,13 @@ int View::PerformChoice() {
 }
 
 void View::StartEventLoop() {
-  std::string path;
   bool is_load = false;
   while (true) {
     DisplayMenu();
 
     switch ((Choice)PerformChoice()) {
       case LOAD:
-        std::cout << "Enter path to file: " << std::endl;
-        std::cin >> path;
-        if (c_->LoadGraphFromFile(path)) {
-          std::cout << "Graph is successfully loaded!" << std::endl;
-          is_load = true;
-        } else {
-          std::cout << "Something wrong with a file path!" << std::endl;
-        }
+        Load(&is_load);
         break;
 
       case BREADTH:
@@ -85,11 +79,10 @@ bool View::Input(int* num_1, int* num_2) {
   int size = c_->GetSize();
   std::cin >> *num_1;
   std::cin >> *num_2;
-  if (!std::cin) {
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    return false;
-  }
+  std::cin.clear();
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  if (!std::cin) return false;
+
   if ((*num_1 > size || *num_1 < 1) || (*num_2 > size || *num_2 < 1)) {
     return false;
   }
@@ -99,15 +92,29 @@ bool View::Input(int* num_1, int* num_2) {
 bool View::Input(int* num_1) {
   int size = c_->GetSize();
   std::cin >> *num_1;
-  if (!std::cin) {
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    return false;
-  }
+  std::cin.clear();
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  if (!std::cin) return false;
+
   if ((*num_1 > size || *num_1 < 1)) {
     return false;
   }
   return true;
+}
+
+void View::Load(bool* flag) {
+  std::cout << "============" << std::endl;
+  std::cout << " LOAD GRAPH " << std::endl;
+  std::cout << "============" << std::endl;
+  std::string path;
+  std::cout << "Enter path to file: " << std::endl;
+  std::cin >> path;
+  if (c_->LoadGraphFromFile(path)) {
+    std::cout << "Graph is successfully loaded!" << std::endl;
+    *flag = true;
+  } else {
+    std::cout << "Something wrong with a file or file path!" << std::endl;
+  }
 }
 
 bool View::LoadCheck(bool flag) {
@@ -117,14 +124,14 @@ bool View::LoadCheck(bool flag) {
 }
 
 void View::Bfs() {
-  std::cout << "=========" << std::endl;
+  std::cout << "======================" << std::endl;
   std::cout << " BREADTH-FIRST SEARCH " << std::endl;
-  std::cout << "=========" << std::endl;
+  std::cout << "======================" << std::endl;
   int num = 0;
   std::cout << "Enter start vertex number: " << std::endl;
   if (Input(&num)) {
     std::vector<int> res_bfs = c_->BreadthFirstSearch(num);
-    for (auto& data : res_bfs) std::cout << data << " ";
+    for (const auto& data : res_bfs) std::cout << data << " ";
     std::cout << std::endl;
   } else {
     std::cout << "You enter wrong vertex number!" << std::endl;
@@ -132,14 +139,14 @@ void View::Bfs() {
 }
 
 void View::Dfs() {
-  std::cout << "=========" << std::endl;
+  std::cout << "====================" << std::endl;
   std::cout << " DEPTH-FIRST SEARCH " << std::endl;
-  std::cout << "=========" << std::endl;
+  std::cout << "====================" << std::endl;
   int num = 0;
   std::cout << "Enter start vertex number: " << std::endl;
   if (Input(&num)) {
     std::vector<int> res_dfs = c_->DepthFirstSearch(num);
-    for (auto& data : res_dfs) std::cout << data << " ";
+    for (const auto& data : res_dfs) std::cout << data << " ";
     std::cout << std::endl;
   } else {
     std::cout << "You enter wrong vertex number!" << std::endl;
@@ -147,9 +154,9 @@ void View::Dfs() {
 }
 
 void View::Dijkstra() {
-  std::cout << "=========" << std::endl;
+  std::cout << "======================" << std::endl;
   std::cout << " DIJKSTRA'S ALGORITHM " << std::endl;
-  std::cout << "=========" << std::endl;
+  std::cout << "======================" << std::endl;
   int num_1 = 0, num_2 = 0;
 
   std::cout << "Enter start and finish vertex numbers: " << std::endl;
@@ -167,9 +174,9 @@ void View::Dijkstra() {
 }
 
 void View::FloWa() {
-  std::cout << "=========" << std::endl;
+  std::cout << "==========================" << std::endl;
   std::cout << " FLOYD-WARSHALL ALGORITHM " << std::endl;
-  std::cout << "=========" << std::endl;
+  std::cout << "==========================" << std::endl;
 
   auto res_flowa = c_->GetShortestPathsBetweenAllVertices();
 
@@ -177,9 +184,9 @@ void View::FloWa() {
 }
 
 void View::Msp() {
-  std::cout << "=========" << std::endl;
+  std::cout << "=======================" << std::endl;
   std::cout << " MINIMUM SPANNING TREE " << std::endl;
-  std::cout << "=========" << std::endl;
+  std::cout << "=======================" << std::endl;
   if (!c_->UndirectedCheck()) {
     std::cout << "Loaded graph is not undirected!" << std::endl;
   } else {
@@ -203,9 +210,9 @@ void View::Msp() {
 
 void View::Tsp() {
   TsmResult tsm_res;
-  std::cout << "=========" << std::endl;
+  std::cout << "=============================" << std::endl;
   std::cout << " TRAVELLING SALESMAN PROBLEM " << std::endl;
-  std::cout << "=========" << std::endl;
+  std::cout << "=============================" << std::endl;
   auto t1 = std::chrono::high_resolution_clock::now();
   tsm_res = std::move(c_->SolveTravelingSalesmanProblem());
   auto t2 = std::chrono::high_resolution_clock::now();
@@ -227,3 +234,5 @@ void View::Tsp() {
               << std::endl;
   }
 }
+
+}  // namespace s21

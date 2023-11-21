@@ -1,5 +1,16 @@
 #include "graph_algorithms.h"
 
+namespace s21 {
+
+/**
+ * @brief Поиск в ширину в графе от заданной вершины. Функция
+ * возвращает массив, содержащий в себе обойдённые вершины в порядке их
+ * обхода. При реализации этой функции использовалась самописная
+ * структуру данных очередь.
+ *
+ * @param graph
+ * @param start_vertex
+ */
 std::vector<int> GraphAlgorithms::BreadthFirstSearch(const Graph& graph,
                                                      int start_vertex) {
   std::vector<int> visited(graph.GetSize(), -1);
@@ -28,6 +39,15 @@ std::vector<int> GraphAlgorithms::BreadthFirstSearch(const Graph& graph,
   return visited_order;
 }
 
+/**
+ * @brief Нерекурентный поиск в глубину в графе от заданной вершины.
+ * Функция возвращает массив, содержащий в себе обойдённые
+ * вершины в порядке их обхода. При реализации этой функции
+ * использовалась самописную структуру данных стек.
+ *
+ * @param graph
+ * @param start_vertex
+ */
 std::vector<int> GraphAlgorithms::DepthFirstSearch(const Graph& graph,
                                                    int start_vertex) {
   std::vector<int> visited(graph.GetSize(), -1);
@@ -71,6 +91,16 @@ std::vector<int> GraphAlgorithms::DepthFirstSearch(const Graph& graph,
   return visited_order;
 }
 
+/**
+ * @brief Поиск кратчайшего пути между двумя вершинами в графе с использованием
+ * алгоритма Дейкстры. Функция принимает на вход номера двух вершин и
+ * возвращает численный результат, равный наименьшему расстоянию между ними
+ *
+ * @param graph
+ * @param vertex1
+ * @param vertex2
+ * @return long int
+ */
 long GraphAlgorithms::GetShortestPathBetweenVertices(const Graph& graph,
                                                      int vertex1, int vertex2) {
   int vertex_count = graph.GetSize();
@@ -93,14 +123,23 @@ long GraphAlgorithms::GetShortestPathBetweenVertices(const Graph& graph,
 
     if (dist.at(nearest) == INFINITY) return -1;
     visited.at(nearest) = 1;
-    for (int i = 0; i < vertex_count; ++i) {
-      if (graph(nearest, i) == INFINITY) continue;
-      dist.at(i) = std::min(dist.at(i), dist.at(nearest) + graph(nearest, i));
+    for (int i2 = 0; i2 < vertex_count; ++i2) {
+      if (graph(nearest, i2) == INFINITY) continue;
+      dist.at(i2) =
+          std::min(dist.at(i2), dist.at(nearest) + graph(nearest, i2));
     }
   }
   return dist[vertex2];
 }
 
+/**
+ * @brief Поиск кратчайших путей между всеми парами вершин в графе с
+ * использованием алгоритма Флойда-Уоршелла. В качестве результата
+ * функция возвращает матрицу кратчайших путей между всеми вершинами графа
+ *
+ * @param graph
+ * @return std::vector<std::vector<int>>
+ */
 AdjMatrix GraphAlgorithms::GetShortestPathsBetweenAllVertices(
     const Graph& graph) {
   int vertex_count = graph.GetSize();
@@ -119,10 +158,17 @@ AdjMatrix GraphAlgorithms::GetShortestPathsBetweenAllVertices(
       }
     }
   }
-
   return dist;
 }
 
+/**
+ * @brief Поиск наименьшего остовного дерева в графе с помощью
+ * алгоритма Прима. В качестве результата функция возвращает
+ * матрицу смежности для минимального остовного дерева.
+ *
+ * @param graph
+ * @return std::vector<std::vector<int>>
+ */
 std::vector<std::vector<double>> GraphAlgorithms::GetLeastSpanningTree(
     const Graph& graph) {
   std::vector<std::vector<double>> result;
@@ -166,6 +212,16 @@ std::vector<std::vector<double>> GraphAlgorithms::GetLeastSpanningTree(
   return result;
 }
 
+/**
+ * @brief Решение задачи коммивояжера с помощью муравьиного алгоритма.
+ * Находим самый выгодный (короткий) маршрут, проходящий
+ * через все вершины графа хотя бы по одному разу с последующим
+ * возвратом в исходную вершину. В качестве результата функция
+ * возвращает структуру TsmResult.
+ *
+ * @param graph
+ * @return TsmResult
+ */
 TsmResult GraphAlgorithms::SolveSalesmansProblem(const Graph& graph) {
   AntsLogic al_(graph);
   return al_.SolveSalesmansProblem();
@@ -190,3 +246,5 @@ int GraphAlgorithms::Random(int size) {
   std::uniform_int_distribution<int> gen(0, size - 1);
   return gen(rng);
 }
+
+}  // namespace s21

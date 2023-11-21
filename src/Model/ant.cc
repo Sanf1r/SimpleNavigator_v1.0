@@ -1,5 +1,7 @@
 #include "ant.h"
 
+namespace s21 {
+
 void Ant::AntMove(const Graph &graph, const AdjMatrix &pheromone_map, double a,
                   double b) {
   // start run
@@ -76,7 +78,7 @@ void Ant::MakeRoulette(const std::vector<int> &neighbor_vertexes,
   probability_.clear();
   std::vector<double> wish;
   double summary_wish = 0.0f;
-  for (auto &v : neighbor_vertexes) {
+  for (const auto &v : neighbor_vertexes) {
     double t = pheromone_map(current_location_, v);
     double n = std::pow(graph(current_location_, v), -1);
     wish.push_back(std::pow(t, a) * std::pow(n, b));
@@ -90,3 +92,5 @@ void Ant::MakeRoulette(const std::vector<int> &neighbor_vertexes,
     if (i != 0) probability_[i] += probability_[i - 1];
   }
 }
+
+}  // namespace s21

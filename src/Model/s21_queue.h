@@ -1,7 +1,9 @@
-#ifndef A2_SIMPLENAVIGATOR_MAZE_SRC_LIBS_S21_QUEUE_H_
-#define A2_SIMPLENAVIGATOR_MAZE_SRC_LIBS_S21_QUEUE_H_
+#ifndef A2_SIMPLENAVIGATOR_SRC_MODEL_S21_QUEUE_H_
+#define A2_SIMPLENAVIGATOR_SRC_MODEL_S21_QUEUE_H_
 
 #include "s21_stack.h"
+
+namespace s21 {
 
 template <class T>
 class queue : public stack<T> {
@@ -75,4 +77,6 @@ class queue : public stack<T> {
   }
 };
 
-#endif  // A2_SIMPLENAVIGATOR_MAZE_SRC_LIBS_S21_QUEUE_H_
+}  // namespace s21
+
+#endif  // A2_SIMPLENAVIGATOR_SRC_MODEL_S21_QUEUE_H_

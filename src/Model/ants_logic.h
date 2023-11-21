@@ -1,8 +1,10 @@
-#ifndef ANTS_LOGIC_H_
-#define ANTS_LOGIC_H_
+#ifndef A2_SIMPLENAVIGATOR_SRC_MODEL_ANTS_LOGIC_H_
+#define A2_SIMPLENAVIGATOR_SRC_MODEL_ANTS_LOGIC_H_
 
 #include "ant.h"
 #include "graph.h"
+
+namespace s21 {
 
 class AntsLogic {
  public:
@@ -29,5 +31,6 @@ class AntsLogic {
 
   void UpdateGlobalPheromone(const AdjMatrix &lpu);
 };
+}  // namespace s21
 
-#endif  //  ANTS_LOGIC_H_
+#endif  //  A2_SIMPLENAVIGATOR_SRC_MODEL_ANTS_LOGIC_H_

@@ -1,10 +1,12 @@
-#ifndef ANT_H_
-#define ANT_H_
+#ifndef A2_SIMPLENAVIGATOR_SRC_MODEL_ANT_H_
+#define A2_SIMPLENAVIGATOR_SRC_MODEL_ANT_H_
 
 #include <random>
 #include <set>
 
 #include "graph.h"
+
+namespace s21 {
 
 class Ant {
  public:
@@ -16,9 +18,7 @@ class Ant {
                double b);
 
   void BrainwashAnt();
-
   bool GetMove();
-
   TsmResult &GetPath();
 
  private:
@@ -30,12 +30,11 @@ class Ant {
   bool can_move_ = true;
 
   double getRandomChoice();
-
   std::vector<int> getNeighborVertexes(const Graph &graph);
-
-  void MakeRoulette(std::vector<int> &neighbor_vertexes,
+  void MakeRoulette(const std::vector<int> &neighbor_vertexes,
                     const AdjMatrix &pheromone_map, const Graph &graph,
                     double a, double b);
 };
+}  // namespace s21
 
-#endif  //  ANT_H_
+#endif  //  A2_SIMPLENAVIGATOR_SRC_MODEL_ANT_H_

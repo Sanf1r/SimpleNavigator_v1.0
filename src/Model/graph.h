@@ -1,5 +1,5 @@
-#ifndef GRAPH_H_
-#define GRAPH_H_
+#ifndef A2_SIMPLENAVIGATOR_SRC_MODEL_GRAPH_H_
+#define A2_SIMPLENAVIGATOR_SRC_MODEL_GRAPH_H_
 
 #include <cmath>
 #include <fstream>
@@ -9,6 +9,8 @@
 #include <vector>
 
 #include "adj_matrix.h"
+
+namespace s21 {
 
 class Graph {
  public:
@@ -37,5 +39,6 @@ struct TsmResult {
   std::vector<int> vertices;
   double distance = 0;
 };
+}  // namespace s21
 
-#endif  //  GRAPH_H_
+#endif  //  A2_SIMPLENAVIGATOR_SRC_MODEL_GRAPH_H_

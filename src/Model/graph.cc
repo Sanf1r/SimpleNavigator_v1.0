@@ -1,7 +1,17 @@
 #include "graph.h"
 
-bool Graph::LoadGraphFromFile(const std::string& path) {
-  std::ifstream file(path);
+namespace s21 {
+
+/**
+ * @brief Загрузка графа из файла в формате матрицы смежности
+ *
+ *
+ * @param filename
+ * @return true
+ * @return false
+ */
+bool Graph::LoadGraphFromFile(const std::string& filename) {
+  std::ifstream file(filename);
   if (file.bad()) return false;
   std::string temp;
   std::getline(file, temp);
@@ -34,12 +44,16 @@ bool Graph::LoadGraphFromFile(const std::string& path) {
   return true;
 }
 
-bool Graph::ExportGraphToDot(const std::string& path) {
-  bool showLabel = true;
-  bool showDir = false;
-
+/**
+ * @brief Выгрузка графа в файл в формате dot (см. материалы)
+ *
+ * @param filename
+ */
+bool Graph::ExportGraphToDot(const std::string& filename) {
   if (size_ != 0) {
-    std::ofstream f(path);
+    bool showLabel = true;
+    bool showDir = false;
+    std::ofstream f(filename);
     f << "digraph G {" << std::endl;
     for (int i = 0; i < size_; ++i) {
       for (int j = i; j < size_; ++j) {
@@ -49,7 +63,7 @@ bool Graph::ExportGraphToDot(const std::string& path) {
           if (showLabel) {
             f << i + 1 << " -> " << j + 1 << " [dir=" << dir
               << " label=" << data_(i, j) << "]" << std::endl;
-          } else if (!showLabel) {
+          } else {
             f << i + 1 << " -> " << j + 1 << " [dir=" << dir << "]"
               << std::endl;
           }
@@ -63,3 +77,5 @@ bool Graph::ExportGraphToDot(const std::string& path) {
   }
   return true;
 }
+
+}  // namespace s21

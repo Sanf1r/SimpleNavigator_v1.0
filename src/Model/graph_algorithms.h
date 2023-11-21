@@ -1,5 +1,5 @@
-#ifndef GRAPH_ALGORITHMS_H_
-#define GRAPH_ALGORITHMS_H_
+#ifndef A2_SIMPLENAVIGATOR_SRC_MODEL_GRAPH_ALGORITHMS_H_
+#define A2_SIMPLENAVIGATOR_SRC_MODEL_GRAPH_ALGORITHMS_H_
 
 #include <algorithm>
 #include <random>
@@ -10,6 +10,8 @@
 #include "graph.h"
 #include "s21_queue.h"
 #include "s21_stack.h"
+
+namespace s21 {
 
 class GraphAlgorithms {
  public:
@@ -32,4 +34,6 @@ class GraphAlgorithms {
   int Random(int size);
 };
 
-#endif  //  GRAPH_ALGORITHMS_H_
+}  // namespace s21
+
+#endif  //  A2_SIMPLENAVIGATOR_SRC_MODEL_GRAPH_ALGORITHMS_H_

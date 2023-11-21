@@ -1,17 +1,11 @@
-/**
- * @file
- * @author
- * @brief s21::stack (стек) - это динамическая структура данных. Некая
- * коллекция, состоящая из элементов. Организация и работа стека придерживается
- * правилу "LAST_IN_FIRST_OUT" (LIFO). То что добавляется в последнюю очередь -
- * извлекается первым.
- */
-#ifndef A2_SIMPLENAVIGATOR_MAZE_SRC_LIBS_S21_STACK_H_
-#define A2_SIMPLENAVIGATOR_MAZE_SRC_LIBS_S21_STACK_H_
+#ifndef A2_SIMPLENAVIGATOR_SRC_MODEL_S21_STACK_H_
+#define A2_SIMPLENAVIGATOR_SRC_MODEL_S21_STACK_H_
 
 #include <cstddef>
 #include <initializer_list>
 #include <stdexcept>
+
+namespace s21 {
 
 template <class T>
 class stack {
@@ -103,6 +97,7 @@ class stack {
       push(buff->data_);
       buff = buff->next_;
     }
+    size_ = s.size_;
     return *this;
   }
 
@@ -210,4 +205,6 @@ class stack {
   size_t size_;
 };
 
-#endif  // A2_SIMPLENAVIGATOR_MAZE_SRC_LIBS_S21_STACK_H_
+}  // namespace s21
+
+#endif  // A2_SIMPLENAVIGATOR_SRC_MODEL_S21_STACK_H_

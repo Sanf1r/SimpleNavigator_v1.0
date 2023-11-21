@@ -1,9 +1,11 @@
-#ifndef ADJ_MATRIX_H_
-#define ADJ_MATRIX_H_
+#ifndef A2_SIMPLENAVIGATOR_SRC_MODEL_ADJ_MATRIX_H_
+#define A2_SIMPLENAVIGATOR_SRC_MODEL_ADJ_MATRIX_H_
 
 #include <cmath>
 #include <iostream>
 #include <vector>
+
+namespace s21 {
 
 class AdjMatrix {
  public:
@@ -31,5 +33,6 @@ class AdjMatrix {
   int offset_ = 0;
   std::vector<double> data_;
 };
+}  // namespace s21
 
-#endif  //  ADJ_MATRIX_H_
+#endif  //  A2_SIMPLENAVIGATOR_SRC_MODEL_ADJ_MATRIX_H_

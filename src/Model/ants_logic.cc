@@ -1,5 +1,7 @@
 #include "ants_logic.h"
 
+namespace s21 {
+
 AntsLogic::AntsLogic(const Graph &graph) : graph_(graph) {
   pheromone_.InitWithNumber(graph.GetSize(), 0.2);
   graph_size_ = graph_.GetSize();
@@ -68,3 +70,5 @@ void AntsLogic::UpdateGlobalPheromone(const AdjMatrix &lpu) {
     }
   }
 }
+
+}  // namespace s21
