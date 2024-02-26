@@ -191,7 +191,7 @@ void View::Msp() {
     std::cout << "Loaded graph is not undirected!" << std::endl;
   } else {
     std::vector<std::vector<double>> tree_res =
-        std::move(c_->GetLeastSpanningTree());
+        c_->GetLeastSpanningTree();
     std::cout << "Minimum spanning tree found!" << std::endl;
     std::cout << "The adjacency matrix for the minimum spanning tree "
                  "presented below:"
